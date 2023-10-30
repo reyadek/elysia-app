@@ -8,11 +8,8 @@ const userIdDTO = t.Object({
 });
 
 const userDTO = t.Object({
-  id: t.Numeric(),
   email: t.String(),
   password: t.String(),
-  createdAt: t.String(),
-  UpdatedAt: t.String(),
 });
 
 app.get("/", () => "Hello Elysia");
