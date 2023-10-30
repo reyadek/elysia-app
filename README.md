@@ -3,6 +3,9 @@
 ## CRUD API Elysia with Bun
 - create database elysia_app
 ```bash
+bun i  
+```
+```bash
 npx prisma migrate dev --name init  
 ```
 
