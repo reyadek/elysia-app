@@ -1,44 +1,23 @@
-import { Elysia, t } from "elysia";
+import { Elysia } from "elysia";
 import { UserController } from "./controllers/UserController";
+import jwt from "@elysiajs/jwt";
+import cookie from "@elysiajs/cookie";
+import { AuthController } from "./controllers/AuthController";
 
 const app = new Elysia();
 
-const userIdDTO = t.Object({
-  id: t.Numeric(),
-});
-
-const userDTO = t.Object({
-  email: t.String(),
-  password: t.String(),
-});
-
 app.get("/", () => "Hello Elysia");
+app
+  .use(
+    jwt({
+      name: "jwt",
+      secret: Bun.env.JWT_SECRET!,
+    })
+  )
+  .use(cookie())
+  .use(AuthController);
 
-app.group("/user", (app) =>
-  app
-    .get("/", UserController.getUsers)
-    .get("/:id", ({ params: { id } }) => UserController.getUserById(id), {
-      params: userIdDTO,
-    })
-    .post("/create", ({ body }) => UserController.createUser(body), {
-      body: userDTO,
-    })
-    .post(
-      "/update/:id",
-      ({ params: { id }, body }) => UserController.updateUser(id, body),
-      {
-        params: userIdDTO,
-        body: userDTO,
-      }
-    )
-    .post(
-      "/delete/:id",
-      ({ params: { id } }) => UserController.deleteUser(id),
-      {
-        params: userIdDTO,
-      }
-    )
-);
+app.group("/user", (route) => route.use(UserController));
 
 app.listen(3000);
 
