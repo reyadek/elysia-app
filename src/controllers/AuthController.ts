@@ -2,7 +2,7 @@ import Elysia from "elysia";
 import jwt from "@elysiajs/jwt";
 import cookie from "@elysiajs/cookie";
 import { db } from "../database/db";
-import { userDTO } from "../dto/user.dto";
+import { userDTO, userLoginDTO } from "../dto/user.dto";
 import { comparePassword, createHashPassword } from "../utils/auth";
 
 export const AuthController = new Elysia()
@@ -19,7 +19,7 @@ export const AuthController = new Elysia()
   .post(
     "/register",
     async ({ body, set }) => {
-      const { email, password } = body;
+      const { name, email, password } = body;
       const emailExists = await db.user.findUnique({
         where: {
           email,
@@ -32,8 +32,8 @@ export const AuthController = new Elysia()
         set.status = 400;
         return {
           success: false,
-          data: null,
           message: "email address already in use",
+          data: null,
         };
       }
 
@@ -41,10 +41,17 @@ export const AuthController = new Elysia()
       //return hash_and_salt;
       const newUser = await db.user.create({
         data: {
+          name: name,
           email: email,
           password: password,
           hash: hashAndSalt.hash,
           salt: hashAndSalt.salt,
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          password: true,
         },
       });
 
@@ -53,7 +60,10 @@ export const AuthController = new Elysia()
         success: true,
         message: "user created",
         data: {
-          user: newUser,
+          id: newUser.id,
+          name: newUser.name,
+          email: newUser.email,
+          password: newUser.password,
         },
       };
     },
@@ -71,6 +81,7 @@ export const AuthController = new Elysia()
         },
         select: {
           id: true,
+          name: true,
           email: true,
           hash: true,
           salt: true,
@@ -81,8 +92,8 @@ export const AuthController = new Elysia()
         set.status = 400;
         return {
           success: false,
-          data: null,
           message: "invalid credentials",
+          data: null,
         };
       }
 
@@ -92,8 +103,8 @@ export const AuthController = new Elysia()
         set.status = 400;
         return {
           success: false,
-          data: null,
           message: "invalid credentials",
+          data: null,
         };
       }
 
@@ -113,15 +124,16 @@ export const AuthController = new Elysia()
       set.status = 200;
       return {
         success: true,
+        message: "login success",
         data: {
           id: user.id,
+          name: user.name,
           email: user.email,
         },
         accessToken: accessToken,
-        message: "login success",
       };
     },
     {
-      body: userDTO,
+      body: userLoginDTO,
     }
   );

@@ -1,6 +1,6 @@
 import { Elysia } from "elysia";
 import { db } from "../database/db";
-import { userDTO, userIdDTO } from "../dto/user.dto";
+import { userIdDTO, userEditDTO } from "../dto/user.dto";
 import { isAuthenticated } from "../utils/isAuthenticated";
 
 export const UserController = new Elysia()
@@ -8,13 +8,20 @@ export const UserController = new Elysia()
   .use(isAuthenticated)
 
   .get("/", async ({ set }) => {
-    const users = await db.user.findMany();
+    const users = await db.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        password: true,
+      },
+    });
 
     set.status = 200;
     return {
       success: true,
-      data: users,
       message: "users",
+      data: users,
     };
   })
 
@@ -26,20 +33,26 @@ export const UserController = new Elysia()
         where: {
           id: id,
         },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          password: true,
+        },
       });
       if (user) {
         set.status = 200;
         return {
           success: true,
-          data: user,
           message: "user exist",
+          data: user,
         };
       } else {
         set.status = 400;
         return {
           success: false,
-          data: null,
           message: "user not exist",
+          data: null,
         };
       }
     },
@@ -68,8 +81,7 @@ export const UserController = new Elysia()
             id: id,
           },
           data: {
-            email: body.email,
-            password: body.password,
+            name: body.name,
           },
         });
 
@@ -78,11 +90,14 @@ export const UserController = new Elysia()
           success: true,
           message: "user updated",
           data: {
-            user: updateUser,
+            id: updateUser.id,
+            name: updateUser.name,
+            email: updateUser.email,
+            password: updateUser.password,
           },
         };
       } else {
-        set.status = 200;
+        set.status = 400;
         return {
           success: true,
           message: "user not found",
@@ -92,7 +107,7 @@ export const UserController = new Elysia()
     },
     {
       params: userIdDTO,
-      body: userDTO,
+      body: userEditDTO,
     }
   )
 
@@ -116,8 +131,13 @@ export const UserController = new Elysia()
         set.status = 200;
         return {
           success: true,
-          message: "user not exist",
-          data: deleteUser,
+          message: "user deleted",
+          data: {
+            id: deleteUser.id,
+            name: deleteUser.name,
+            email: deleteUser.email,
+            password: deleteUser.password,
+          },
         };
       } else {
         set.status = 400;

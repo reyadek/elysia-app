@@ -4,9 +4,16 @@ export const userIdDTO = t.Object({
 });
 
 export const userDTO = t.Object({
+  name: t.String(),
   email: t.String(),
   password: t.String(),
-  // hash: t.String(),
-  // salt: t.String(),
 });
 
+export const userLoginDTO = t.Object({
+  email: t.String(),
+  password: t.String(),
+});
+
+export const userEditDTO = t.Object({
+  name: t.String(),
+});
