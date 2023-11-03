@@ -1,18 +1,12 @@
 import { Elysia } from "elysia";
-import { PrismaClient, Prisma } from "@prisma/client";
+import { db } from "../database/db";
 import { userDTO, userIdDTO } from "../dto/user.dto";
-
-const db = new PrismaClient();
+import { isAuthenticated } from "../utils/isAuthenticated";
 
 export const UserController = new Elysia()
 
-  //list user
-  .onRequest(() => {
-    console.log("On request");
-  })
-  .on("beforeHandle", () => {
-    console.log("beforeHandle");
-  })
+  .use(isAuthenticated)
+
   .get("/", async ({ set }) => {
     const users = await db.user.findMany();
 
@@ -58,63 +52,6 @@ export const UserController = new Elysia()
     }
   )
 
-  //user create
-  .post(
-    "/create",
-    async ({ body, set }) => {
-      const { email, password } = body;
-      const emailExists = await db.user.findUnique({
-        where: {
-          email,
-        },
-        select: {
-          id: true,
-        },
-      });
-      if (emailExists) {
-        set.status = 400;
-        return {
-          success: false,
-          data: null,
-          message: "email address already in use",
-        };
-      }
-      const newUser = await db.user.create({
-        data: body,
-      });
-
-      set.status = 200;
-      return {
-        success: true,
-        message: "user created",
-        data: {
-          user: newUser,
-        },
-      };
-    },
-    //   try {
-    //     return await db.user.create({
-    //       data: body,
-    //     });
-    //   } catch (e) {
-    //     if (e instanceof Prisma.PrismaClientKnownRequestError) {
-    //       if (e.code === "P2002") {
-    //         console.log(
-    //           "There is a unique constraint violation, a new user cannot be created with this email"
-    //         );
-    //         return {
-    //           error: "Username must be unique",
-    //         };
-    //       }
-    //     }
-    //     throw e;
-    //   }
-    // }
-    {
-      body: userDTO,
-    }
-  )
-
   //update user
   .post(
     "/update/:id",
@@ -125,50 +62,32 @@ export const UserController = new Elysia()
         },
       });
 
-      try {
-        if (find_user) {
-          const updateUser = await db.user.update({
-            where: {
-              id: id,
-            },
-            data: {
-              email: body.email,
-              password: body.password,
-            },
-          });
+      if (find_user) {
+        const updateUser = await db.user.update({
+          where: {
+            id: id,
+          },
+          data: {
+            email: body.email,
+            password: body.password,
+          },
+        });
 
-          set.status = 200;
-          return {
-            success: true,
-            message: "user updated",
-            data: {
-              user: updateUser,
-            },
-          };
-        } else {
-          set.status = 200;
-          return {
-            success: true,
-            message: "user not found",
-            data: null,
-          };
-        }
-      } catch (e) {
-        if (e instanceof Prisma.PrismaClientKnownRequestError) {
-          if (e.code === "P2002") {
-            console.log(
-              "There is a unique constraint violation, a new user cannot be created with this email"
-            );
-
-            set.status = 200;
-            return {
-              success: true,
-              message: "email address already in use.",
-              data: null,
-            };
-          }
-        }
-        throw e;
+        set.status = 200;
+        return {
+          success: true,
+          message: "user updated",
+          data: {
+            user: updateUser,
+          },
+        };
+      } else {
+        set.status = 200;
+        return {
+          success: true,
+          message: "user not found",
+          data: null,
+        };
       }
     },
     {
