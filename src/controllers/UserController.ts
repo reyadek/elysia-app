@@ -6,7 +6,6 @@ import { isAuthenticated } from "../utils/isAuthenticated";
 export const UserController = new Elysia()
 
   .use(isAuthenticated)
-
   .get("/", async ({ set }) => {
     const users = await db.user.findMany({
       select: {

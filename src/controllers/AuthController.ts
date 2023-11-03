@@ -13,6 +13,7 @@ export const AuthController = new Elysia()
       exp: process.env.JWT_EXPIRED,
     })
   )
+
   .use(cookie())
 
   //user create
@@ -20,6 +21,11 @@ export const AuthController = new Elysia()
     "/register",
     async ({ body, set }) => {
       const { name, email, password } = body;
+
+      // const validationEmail = z.coerce.string().email().min(5).parse("email");
+
+      // return User.parse({ email: email });
+
       const emailExists = await db.user.findUnique({
         where: {
           email,
@@ -69,6 +75,7 @@ export const AuthController = new Elysia()
     },
     {
       body: userDTO,
+      // body: User,
     }
   )
   .post(
