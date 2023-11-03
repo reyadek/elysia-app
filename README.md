@@ -39,9 +39,9 @@ bun run dev
 Open http://localhost:3000/ with your browser to see the result.
 
 #### http request list
-- Register user* post: http://localhost:3000/register (param: name email, password)
-- Login user* post: http://localhost:3000/login (param: email, password)
+- Register user* post: http://localhost:3000/register (body: name email, password)
+- Login user* post: http://localhost:3000/login (body: email, password)
 - List user* get: http://localhost:3000/user (use response value from login "access_token" to headers)
-- By ID user* get: http://localhost:3000/user/1 (use response value from login "access_token" to headers) (param: id)
-- Update user* get: http://localhost:3000/user/1 (use response value from login "access_token" to headers) (param: name, email, password)
+- By ID user* get: http://localhost:3000/user/1 (use response value from login "access_token" to headers) (params: id)
+- Update user* get: http://localhost:3000/user/1 (use response value from login "access_token" to headers) (params: id) (body: name, email, password)
 - Delete user* post: http://localhost:3000/user/1 (use response value from login "access_token" to headers) (param: id)
