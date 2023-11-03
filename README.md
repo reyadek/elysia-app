@@ -5,8 +5,12 @@
 #### Install Bun
 - https://bun.sh/docs/installation
 
-#### setup database
+#### setup database and env
 - create database elysia_app with mysql
+- setup .env
+- DATABASE_URL="mysql://root:Asdqwe12345@localhost:3306/elysia_app?schema=public"
+- JWT_SECRETS="secret"
+- JWT_EXPIRED="2h"
 
 #### list dependency
 - "elysia": "latest" (Nov 3th, 2023)
