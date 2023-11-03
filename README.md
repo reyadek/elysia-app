@@ -5,27 +5,28 @@
 #### Install Bun
 - https://bun.sh/docs/installation
 
-#### setup database and env
+#### Setup database and env
 - create database elysia_app with mysql
 - setup .env
 - `DATABASE_URL= "mysql://root:Asdqwe12345@localhost:3306/elysia_app?schema=public"`
 - `JWT_SECRETS= "secret"`
 - `JWT_EXPIRED= "2h"`
 
-#### list dependency
+#### List dependency
 - "elysia": "latest" (Nov 3th, 2023)
 - "@elysiajs/cookie": "^0.7.0"
 - "@elysiajs/jwt": "^0.7.0"
 - "@prisma/client": "^5.5.2",
 - "prisma": "^5.5.2"
+- "@elysiajs/swagger": "^0.7.4"
 
 checkout detail in package.json
 
-#### install dependency
+#### Install dependency
 ```bash
 bun i  
 ```
-#### init prisma
+#### Init prisma
 ```bash
 npx prisma migrate dev --name init  
 ```
@@ -38,13 +39,16 @@ bun run dev
 
 Open http://localhost:3000/ with your browser to see the result.
 
-#### http request list
+#### Http request list
 - Register user* post: http://localhost:3000/register (body: name email, password)
 - Login user* post: http://localhost:3000/login (body: email, password)
 - List user* get: http://localhost:3000/user (use response value from login "access_token" to headers)
 - By ID user* get: http://localhost:3000/user/1 (use response value from login "access_token" to headers) (params: id)
 - Update user* get: http://localhost:3000/user/1 (use response value from login "access_token" to headers) (params: id) (body: name, email, password)
 - Delete user* post: http://localhost:3000/user/1 (use response value from login "access_token" to headers) (params: id)
+
+#### Swagger
+`http://localhost:3000/swagger`
   
 #### Author
 - [@reyadek](https://www.github.com/reyadek)
