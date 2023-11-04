@@ -16,9 +16,9 @@ export const isAuthenticated = new Elysia()
     console.log("On request");
   })
   .on("beforeHandle", async ({ jwt, set, cookie }) => {
-    //check access_token from cookie
-    const check = await jwt.verify(cookie!.access_token_cookie);
-    if (!check) {
+    //check access_token_cookie from cookie
+    const verify = await jwt.verify(cookie!.access_token_cookie);
+    if (!verify) {
       set.status = 401;
       return {
         success: false,
@@ -29,9 +29,10 @@ export const isAuthenticated = new Elysia()
 
     const user = await db.user.findUnique({
       where: {
-        email: check.email,
+        id: verify.id,
       },
     });
+
     if (!user) {
       set.status = 401;
       return {

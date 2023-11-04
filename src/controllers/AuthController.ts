@@ -67,15 +67,15 @@ export const AuthController = new Elysia()
         };
       }
 
-      const hashAndSalt = await createHashPassword(password);
+      const createPassword = await createHashPassword(password);
       //return hash_and_salt;
       const newUser = await db.user.create({
         data: {
           name: name,
           email: email,
           password: password,
-          hash: hashAndSalt.hash,
-          salt: hashAndSalt.salt,
+          hash: createPassword.hash,
+          salt: createPassword.salt,
         },
         select: {
           id: true,
@@ -141,7 +141,7 @@ export const AuthController = new Elysia()
 
       // generate access
       const accessToken = await jwt.sign({
-        email,
+        id: user.id,
       });
 
       // set access token to cookie
