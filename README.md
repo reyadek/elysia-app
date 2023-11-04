@@ -18,6 +18,7 @@
 - "@elysiajs/jwt": "^0.7.0"
 - "@prisma/client": "^5.5.2",
 - "prisma": "^5.5.2"
+- "zod": "^3.22.4"
 - "@elysiajs/swagger": "^0.7.4"
 
 checkout detail in package.json
@@ -41,14 +42,17 @@ Open http://localhost:3000/ with your browser to see the result.
 
 #### Http request list
 - Register user* post: http://localhost:3000/register (body: name email, password)
-- Login user* post: http://localhost:3000/login (body: email, password)
-- List user* get: http://localhost:3000/user (use response value from login "access_token" to headers)
-- By ID user* get: http://localhost:3000/user/1 (use response value from login "access_token" to headers) (params: id)
-- Update user* get: http://localhost:3000/user/1 (use response value from login "access_token" to headers) (params: id) (body: name, email, password)
-- Delete user* post: http://localhost:3000/user/1 (use response value from login "access_token" to headers) (params: id)
+- Login user* post: http://localhost:3000/login (body: email, password) (access_token will set in cookie named "access_token_cookie")
+- Logout user* post: http://localhost:3000/logout
+  
+- List user* get: http://localhost:3000/user
+- By ID user* get: http://localhost:3000/user/1 (params: id)
+- Update user* get: http://localhost:3000/user/1 (params: id) (body: name, email, password)
+- Delete user* post: http://localhost:3000/user/1 (params: id)
 
 #### Swagger
 `http://localhost:3000/swagger`
   
 #### Author
-- [@reyadek](https://www.github.com/reyadek)
+- ⚡️ [@reyadek](https://www.github.com/reyadek)
+- [![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/ade-putra-359492134/)
