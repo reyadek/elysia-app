@@ -1,9 +1,16 @@
 import Elysia from "elysia";
 import jwt from "@elysiajs/jwt";
+import { z, ZodError } from "zod";
 import cookie from "@elysiajs/cookie";
 import { db } from "../database/db";
 import { userDTO, userLoginDTO } from "../dto/user.dto";
 import { comparePassword, createHashPassword } from "../utils/auth";
+
+const registerValidation = z.object({
+  name: z.string().min(5),
+  email: z.string().email().min(5),
+  password: z.string().min(5),
+});
 
 export const AuthController = new Elysia()
   .use(
@@ -13,7 +20,6 @@ export const AuthController = new Elysia()
       exp: process.env.JWT_EXPIRED,
     })
   )
-
   .use(cookie())
 
   //user create
@@ -22,9 +28,27 @@ export const AuthController = new Elysia()
     async ({ body, set }) => {
       const { name, email, password } = body;
 
-      // const validationEmail = z.coerce.string().email().min(5).parse("email");
+      try {
+        registerValidation.parse({
+          name,
+          email,
+          password,
+        });
+      } catch (error) {
+        if (error instanceof ZodError) {
+          const validation = error.issues.map((v, i) => {
+            return {
+              [v.path[0]]: v.message,
+            };
+          });
 
-      // return User.parse({ email: email });
+          return {
+            success: false,
+            message: validation,
+            data: null,
+          };
+        }
+      }
 
       const emailExists = await db.user.findUnique({
         where: {
@@ -80,7 +104,7 @@ export const AuthController = new Elysia()
   )
   .post(
     "login",
-    async ({ body, cookie, setCookie, set, jwt }) => {
+    async ({ body, setCookie, set, jwt }) => {
       const { email, password } = body;
       const user = await db.user.findFirst({
         where: {
@@ -121,9 +145,9 @@ export const AuthController = new Elysia()
       });
 
       // set access token to cookie
-      setCookie("auth", accessToken, {
+      setCookie("access_token_cookie", accessToken, {
         httpOnly: true,
-        maxAge: 7 * 86400,
+        maxAge: 2 * 7200, //2 hours
       });
 
       // return setCookieAccessToken.value;
@@ -143,4 +167,14 @@ export const AuthController = new Elysia()
     {
       body: userLoginDTO,
     }
-  );
+  )
+  .post("logout", async ({ removeCookie, set }) => {
+    removeCookie("access_token_cookie");
+
+    set.status = 200;
+    return {
+      success: true,
+      message: "logout success",
+      data: null,
+    };
+  });

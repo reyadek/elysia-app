@@ -1,4 +1,5 @@
 import { Elysia } from "elysia";
+import cookie from "@elysiajs/cookie";
 import { db } from "../database/db";
 import jwt from "@elysiajs/jwt";
 
@@ -10,12 +11,13 @@ export const isAuthenticated = new Elysia()
       exp: process.env.JWT_EXPIRED,
     })
   )
+  .use(cookie())
   .onRequest(() => {
     console.log("On request");
   })
-  .on("beforeHandle", async ({ jwt, set, request: { headers } }) => {
-    const access_token = headers.get("access");
-    const check = await jwt.verify(access_token!);
+  .on("beforeHandle", async ({ jwt, set, cookie }) => {
+    //check access_token from cookie
+    const check = await jwt.verify(cookie!.access_token_cookie);
     if (!check) {
       set.status = 401;
       return {
