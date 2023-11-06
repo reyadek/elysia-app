@@ -65,7 +65,7 @@ export const UserController = new Elysia()
   )
 
   //update user
-  .post(
+  .put(
     "/update/:id",
     async ({ params: { id }, body, set }) => {
       const find_user = await db.user.findUnique({
@@ -111,7 +111,7 @@ export const UserController = new Elysia()
   )
 
   //delete user
-  .post(
+  .delete(
     "/delete/:id",
     async ({ params: { id }, set }) => {
       const find_user = await db.user.findUnique({
