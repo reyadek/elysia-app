@@ -47,8 +47,8 @@ Open http://localhost:3000/ with your browser to see the result.
   
 - List user* get: http://localhost:3000/user
 - By ID user* get: http://localhost:3000/user/1 (params: id)
-- Update user* get: http://localhost:3000/user/1 (params: id) (body: name, email, password)
-- Delete user* post: http://localhost:3000/user/1 (params: id)
+- Update user* put: http://localhost:3000/user/1 (params: id) (body: name, email, password)
+- Delete user* delete: http://localhost:3000/user/1 (params: id)
 
 #### Swagger
 `http://localhost:3000/swagger`
